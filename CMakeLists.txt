@@ -23,6 +23,7 @@
 	# Specify includes
 	target_include_directories(${PROJECT_NAME} PRIVATE
 	    libs/DPP/include
+		include
         #libs/spdlog/include # Like before, if you need spdlog
 	)
 	 
