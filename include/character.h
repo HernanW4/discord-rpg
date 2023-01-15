@@ -1,17 +1,27 @@
 #pragma once
-
-
 #include <string>
+
+
+enum class Build{
+    Knight,
+    Archer,
+    Wizard,
+};
+
+enum class Gender{
+    Male,
+    Female,
+};
 
 class Character{
     public:
         int level;
-        std::string active_weapon;
+        std::string activeWeapon;
 
         Character(std::string name, Gender gender, Build build);
-        std::string get_name();
-        Gender get_gender();
-        Build get_build();
+        std::string getName();
+        Gender getGender();
+        Build getBuild();
 
     private:
         std::string name;
@@ -20,13 +30,3 @@ class Character{
 
 };
 
-enum class Build{
-    Knight,
-    Archer,
-    Wizard
-};
-
-enum class Gender{
-    Male,
-    Female,
-};

@@ -12,7 +12,7 @@
 	add_executable(${PROJECT_NAME}
 	    src/main.cpp
 	    # your others files...
-	)
+			src/character.cpp)
 	 
 	# Linking libraries
 	target_link_libraries(${PROJECT_NAME}
