@@ -42,7 +42,7 @@ int main() {
 
   bot.on_log(dpp::utility::cout_logger());
 
-  bot.on_slashcommand([](const dpp::slashcommand_t &event) {
+  bot.on_slashcommand([&bot](const dpp::slashcommand_t &event) {
     if (event.command.get_command_name() == "ping") {
       event.reply("Pong!");
     }
@@ -62,6 +62,34 @@ int main() {
         new_character_creation(event.command.get_issuing_user().id, next_character_creation_id.load());
 
         next_character_creation_id++;
+    }
+
+    if (event.command.get_command_name() == "repeat_embed") {
+        dpp::command_value parameter = event.get_parameter("attachment");
+
+        std::string link = std::get<std::string>(parameter);
+
+        dpp::embed embed = dpp::embed().set_image(link);
+
+        event.reply(dpp::message(event.command.channel_id, embed));
+    }
+
+    if (event.command.get_command_name() == "repeat_image") {
+        dpp::command_value parameter = event.get_parameter("attachment");
+
+        std::string link = std::get<std::string>(parameter);
+
+        bot.request(link, dpp::m_get, [&bot, channel_id = event.command.channel_id, &event](const dpp::http_request_completion_t& httpRequestCompletion) {
+            dpp::message msg(channel_id, "");
+
+            if (httpRequestCompletion.status == 200) {
+                msg.add_file("yourmom.png", httpRequestCompletion.body);
+            } else {
+                msg.set_content("You stoopid bruv");
+            }
+
+            event.reply(msg);
+        });
     }
   });
 
@@ -99,10 +127,18 @@ int main() {
 
   bot.on_ready([&bot](const dpp::ready_t &event) {
     if (dpp::run_once<struct register_bot_commands>()) {
+        /*
       bot.global_command_create(
           dpp::slashcommand("ping", "Ping pong!", bot.me.id));
       bot.global_command_create(
           dpp::slashcommand("embed", "No!", bot.me.id));
+          */
+      bot.global_command_create(
+              dpp::slashcommand("repeat_embed", "Sends an image back to you as an embed", bot.me.id)
+              .add_option(dpp::command_option(dpp::command_option_type::co_string, "attachment", "the image")));
+        bot.global_command_create(
+                dpp::slashcommand("repeat_image", "Sends an image back to you as an image", bot.me.id)
+                .add_option(dpp::command_option(dpp::command_option_type::co_string, "attachment", "the image")));
     }
   });
 
